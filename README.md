@@ -2,7 +2,13 @@ go-servotester is a simple RC servo tester program on Raspberry Pi using the Go 
 
 It uses the following projects:
 - gobot (http://gobot.io/) for managing pin on Raspberry Pi platform
+
+Use [my fork](https://github.com/starryalley/gobot) where I added a support to configure pi-blaster period on a raspi.Adaptor. 
+
 - pi-blaster (https://github.com/sarfata/pi-blaster) for generating PWM in raspberry Pi
+
+Use [my fork](https://github.com/starryalley/pi-blaster) where I modify the period to make the PWM frequency at 50Hz, which is for both analog and digital RC servo.
+
 - libui (https://github.com/andlabs/ui) for GUI
 
 
@@ -10,6 +16,7 @@ It uses the following projects:
 
 I run my raspi headlessly so I make this a simple client-server program. The server runs on raspi and listens on a port receving command to control the RC servo. The client program comes with a GUI or a CLI interface, sending servo position command to the server, and raspi will then set the PWM on specific pin to control the RC servo.
 
+![my setup](images/setup.png)
 
 # Build and Install
 
@@ -37,7 +44,7 @@ For GUI control, run this on your desktop
 
 `./servotester`
 
-![Screenshot](gui.png)
+![Screenshot](images/gui.png)
 
 
 For cli control, run this on your desktop with correct raspi IP and port
