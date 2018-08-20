@@ -70,17 +70,19 @@ func main() {
 		connectButton.OnClicked(func(b *ui.Button) {
 			var err error
 			if !connected {
-				conn, err = ConnectToServer(serverIpInput.Text() + ":" + serverPortInput.Text())
-				if err != nil {
-					fmt.Println(err)
-					statusLabel.SetText(err.Error())
-				} else {
-					statusLabel.SetText("Connected")
-					b.SetText("Disconnect")
-					connected = true
-					// set initial servo position
-					updateServoPosition(currentPosition)
-				}
+				go func() {
+					conn, err = ConnectToServer(serverIpInput.Text() + ":" + serverPortInput.Text())
+					if err != nil {
+						fmt.Println(err)
+						statusLabel.SetText(err.Error())
+					} else {
+						statusLabel.SetText("Connected")
+						b.SetText("Disconnect")
+						connected = true
+						// set initial servo position
+						updateServoPosition(currentPosition)
+					}
+				}()
 			} else {
 				conn.Close()
 				statusLabel.SetText("Disconnected")

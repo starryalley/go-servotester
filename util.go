@@ -64,7 +64,8 @@ func SendServoPWM(conn net.Conn, pin string, dc uint32) (err error) {
 
 // helper function to connect to server
 func ConnectToServer(host string) (conn net.Conn, err error) {
-	conn, err = net.Dial("tcp", host)
+	d := net.Dialer{Timeout: 1 * time.Second}
+	conn, err = d.Dial("tcp", host)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
