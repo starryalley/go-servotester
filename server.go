@@ -112,7 +112,7 @@ func initRaspberryPi(period uint32) (rpi *raspi.Adaptor) {
 func updatePWM(rpi *raspi.Adaptor, p ServoPacket) (err error) {
 	pin, err := rpi.PWMPin(strconv.Itoa(int(p.PinNo)))
 	if err != nil {
-		fmt.Println("Get Pin %v failed:", p.PinNo, err)
+		fmt.Printf("Get Pin %v failed: %v\n", p.PinNo, err)
 		return
 	}
 	err = pin.SetDutyCycle(p.DutyCycle * 1000) //in nanoseconds
