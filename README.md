@@ -3,8 +3,6 @@ go-servotester is a simple RC servo tester program on Raspberry Pi using the Go 
 It uses the following projects:
 - gobot (http://gobot.io/) for managing pin on Raspberry Pi platform
 
-Use `dev` branch in [gobot](https://github.com/hybridgroup/gobot) where a PR by me has been added to configure pi-blaster period on a raspi.Adaptor.
-
 - pi-blaster (https://github.com/sarfata/pi-blaster) for generating PWM in raspberry Pi
 
 Use [my fork](https://github.com/starryalley/pi-blaster) where I modify the period to make the PWM frequency at 50Hz, which is for both analog and digital RC servo.
