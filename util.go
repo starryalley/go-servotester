@@ -9,10 +9,10 @@ import (
 	"time"
 )
 
-// send servo position (0~100%) with presumed endpoint (1.0ms ~ 2.0ms)
+// SendServoPosition sends servo position (0~100%) with presumed endpoint (1.0ms ~ 2.0ms)
 func SendServoPosition(conn net.Conn, pin string, pos float64) (err error) {
 	if pos < 0 || pos > 100 {
-		return errors.New("Out of range\n")
+		return errors.New("out of range")
 	}
 	var p ServoPacket
 	// endpoint [1.0ms, 2.0ms]
@@ -26,7 +26,7 @@ func SendServoPosition(conn net.Conn, pin string, pos float64) (err error) {
 		return
 	}
 	if pinNo > 40 || pinNo < 1 {
-		errors.New("Error ping name")
+		errors.New("error ping name")
 		return
 	}
 	p.PinNo = byte(pinNo)
@@ -39,7 +39,7 @@ func SendServoPosition(conn net.Conn, pin string, pos float64) (err error) {
 	return
 }
 
-// send servo position as PWM duty cycle (microseconds)
+// SendServoPWM sends servo position as PWM duty cycle (microseconds)
 func SendServoPWM(conn net.Conn, pin string, dc uint32) (err error) {
 	conn.SetWriteDeadline(time.Now().Add(1 * time.Second))
 
@@ -49,7 +49,7 @@ func SendServoPWM(conn net.Conn, pin string, dc uint32) (err error) {
 		return
 	}
 	if pinNo > 40 || pinNo < 1 {
-		errors.New("Error ping name")
+		errors.New("error ping name")
 		return
 	}
 	p := ServoPacket{byte(pinNo), dc}
@@ -62,7 +62,7 @@ func SendServoPWM(conn net.Conn, pin string, dc uint32) (err error) {
 	return
 }
 
-// helper function to connect to server
+// ConnectToServer is a helper function to connect to server
 func ConnectToServer(host string) (conn net.Conn, err error) {
 	d := net.Dialer{Timeout: 1 * time.Second}
 	conn, err = d.Dial("tcp", host)

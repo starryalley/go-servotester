@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/andlabs/ui"
 	"net"
 	"strconv"
+
+	"github.com/andlabs/ui"
 )
 
 func main() {
