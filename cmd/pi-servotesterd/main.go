@@ -3,43 +3,44 @@ package main
 import (
 	"encoding/binary"
 	"flag"
-	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"net"
 	"strconv"
 	"time"
 
-    "github.com/sevlyar/go-daemon"
-    . "github.com/starryalley/go-servotester/pkg/common"
+	"gobot.io/x/gobot/platforms/raspi"
+
+	"github.com/sevlyar/go-daemon"
+	st "github.com/starryalley/go-servotester/pkg/common"
 )
 
 //Version of this tool
 var Version = "dev"
 
 func main() {
-    log.Println("pi-servotesterd version:", Version)
+	log.Println("pi-servotesterd version:", Version)
 	var addr = flag.String("addr", "", "Address. Default: \"\"")
 	var port = flag.Int("port", 6789, "Port. Default: 6789")
 	var blasterPeriod = flag.Uint64("period", 10000000, "pi-blaster current period setting. Default: 10000000")
 	flag.Parse()
 
-    context := &daemon.Context {
-        PidFileName: "pi-servotesterd.pid",
-        PidFilePerm: 0644,
-        LogFileName: "/var/log/pi-servotesterd.log",
-        LogFilePerm: 0640,
-        WorkDir: "./",
-        Umask: 027,
-    }
+	context := &daemon.Context{
+		PidFileName: "pi-servotesterd.pid",
+		PidFilePerm: 0644,
+		LogFileName: "/var/log/pi-servotesterd.log",
+		LogFilePerm: 0640,
+		WorkDir:     "./",
+		Umask:       027,
+	}
 
-    d, err := context.Reborn()
-    if err != nil {
-        log.Fatal("Unable to run:", err)
-    }
-    if d != nil {
-        return
-    }
-    defer context.Release()
+	d, err := context.Reborn()
+	if err != nil {
+		log.Fatal("Unable to run:", err)
+	}
+	if d != nil {
+		return
+	}
+	defer context.Release()
 
 	// setup raspi
 	rpi := initRaspberryPi(uint32(*blasterPeriod))
@@ -68,7 +69,7 @@ func handleRequest(conn net.Conn, rpi *raspi.Adaptor) {
 	log.Printf("%v connected\n", client)
 
 	count := make(map[byte]uint64)
-	ch := make(chan ServoPacket, 32)
+	ch := make(chan st.ServoPacket, 32)
 	go processPacket(ch, rpi)
 
 	// reporter timer which will report processed request count every 5 seconds (if there is any change)
@@ -102,7 +103,7 @@ func handleRequest(conn net.Conn, rpi *raspi.Adaptor) {
 
 	// main TCP stream receiver loop
 	for {
-		var p ServoPacket
+		var p st.ServoPacket
 		err := binary.Read(conn, binary.LittleEndian, &p)
 		if err != nil {
 			break
@@ -115,7 +116,7 @@ func handleRequest(conn net.Conn, rpi *raspi.Adaptor) {
 	log.Printf("%v disconnected\n", client)
 }
 
-func processPacket(ch chan ServoPacket, rpi *raspi.Adaptor) {
+func processPacket(ch chan st.ServoPacket, rpi *raspi.Adaptor) {
 	for {
 		p, ok := <-ch
 		if !ok {
@@ -133,7 +134,7 @@ func initRaspberryPi(period uint32) (rpi *raspi.Adaptor) {
 }
 
 // duty cycle is in nanoseconds
-func updatePWM(rpi *raspi.Adaptor, p ServoPacket) (err error) {
+func updatePWM(rpi *raspi.Adaptor, p st.ServoPacket) (err error) {
 	pin, err := rpi.PWMPin(strconv.Itoa(int(p.PinNo)))
 	if err != nil {
 		log.Printf("Get Pin %v failed: %v\n", p.PinNo, err)

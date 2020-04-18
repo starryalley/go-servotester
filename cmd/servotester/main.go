@@ -4,19 +4,19 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"log"
 	"os"
-    "log"
 	"strconv"
 	"strings"
 
-    . "github.com/starryalley/go-servotester/pkg/common"
+	st "github.com/starryalley/go-servotester/pkg/common"
 )
 
 //Version of this tool
 var Version = "dev"
 
 func main() {
-    log.Println("servotester version:", Version)
+	log.Println("servotester version:", Version)
 	var addr = flag.String("addr", "127.0.0.1", "Address. Default: 127.0.0.1")
 	var port = flag.Int("port", 6789, "Port. Default: 6789")
 	flag.Parse()
@@ -24,7 +24,7 @@ func main() {
 	host := *addr + ":" + strconv.Itoa(*port)
 	fmt.Printf("Connecting to %v\n", host)
 
-	conn, err := ConnectToServer(host)
+	conn, err := st.ConnectToServer(host)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -56,16 +56,16 @@ func main() {
 		if tokens[1] == "swing" {
 			go func() {
 				for i := 0.0; i < 100.0; i += 2 {
-					SendServoPosition(conn, tokens[0], float64(i))
+					st.SendServoPosition(conn, tokens[0], float64(i))
 				}
 				for i := 100.0; i >= 0.0; i -= 2 {
-					SendServoPosition(conn, tokens[0], float64(i))
+					st.SendServoPosition(conn, tokens[0], float64(i))
 				}
 			}()
 			continue
 		}
 		if tokens[1] == "center" {
-			go SendServoPosition(conn, tokens[0], 50)
+			go st.SendServoPosition(conn, tokens[0], 50)
 			continue
 		}
 
@@ -75,6 +75,6 @@ func main() {
 			fmt.Printf("Error parsing input: %v\n", err)
 			continue
 		}
-		go SendServoPosition(conn, tokens[0], f)
+		go st.SendServoPosition(conn, tokens[0], f)
 	}
 }

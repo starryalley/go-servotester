@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/andlabs/ui"
-    . "github.com/starryalley/go-servotester/pkg/common"
+	st "github.com/starryalley/go-servotester/pkg/common"
 )
 
 func main() {
@@ -44,7 +44,7 @@ func main() {
 				float32(100000))
 			slider.SetValue(pos)
 
-			go SendServoPWM(conn, pinInput.Text(), dutyCycle)
+			go st.SendServoPWM(conn, pinInput.Text(), dutyCycle)
 		}
 
 		// slider on change
@@ -57,7 +57,7 @@ func main() {
 				// update label
 				servoPositionLabel.SetText(strconv.Itoa(int(currentPosition)))
 				// send to server
-				go SendServoPWM(conn, pinInput.Text(), currentPosition)
+				go st.SendServoPWM(conn, pinInput.Text(), currentPosition)
 			}
 		})
 
@@ -73,7 +73,7 @@ func main() {
 			var err error
 			if !connected {
 				go func() {
-					conn, err = ConnectToServer(serverIPInput.Text() + ":" + serverPortInput.Text())
+					conn, err = st.ConnectToServer(serverIPInput.Text() + ":" + serverPortInput.Text())
 					if err != nil {
 						fmt.Println(err)
 						statusLabel.SetText(err.Error())
@@ -129,10 +129,10 @@ func main() {
 				go func() {
 					const step = 20
 					for i := lowerEndpoint; i <= upperEndpoint; i += step {
-						SendServoPWM(conn, pinInput.Text(), i)
+						st.SendServoPWM(conn, pinInput.Text(), i)
 					}
 					for i := upperEndpoint; i >= lowerEndpoint; i -= step {
-						SendServoPWM(conn, pinInput.Text(), i)
+						st.SendServoPWM(conn, pinInput.Text(), i)
 					}
 					updateServoPosition(lowerEndpoint)
 				}()
