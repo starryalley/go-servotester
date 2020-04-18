@@ -21,7 +21,7 @@ func main() {
 	log.Println("pi-servotesterd version:", Version)
 	var addr = flag.String("addr", "", "Address. Default: \"\"")
 	var port = flag.Int("port", 6789, "Port. Default: 6789")
-	var blasterPeriod = flag.Uint64("period", 10000000, "pi-blaster current period setting. Default: 10000000")
+	var blasterPeriod = flag.Uint64("period", 20000000, "pi-blaster current period setting. Default: 20000000")
 	flag.Parse()
 
 	context := &daemon.Context{
@@ -122,7 +122,7 @@ func processPacket(ch chan st.ServoPacket, rpi *raspi.Adaptor) {
 		if !ok {
 			break
 		}
-		updatePWM(rpi, p)
+		st.UpdatePWM(rpi, p)
 	}
 }
 
@@ -131,20 +131,4 @@ func initRaspberryPi(period uint32) (rpi *raspi.Adaptor) {
 	rpi.PiBlasterPeriod = period // pi-blaster set to 50Hz
 	log.Printf("pi-blaster period set to %v nanoseconds\n", period)
 	return
-}
-
-// duty cycle is in nanoseconds
-func updatePWM(rpi *raspi.Adaptor, p st.ServoPacket) (err error) {
-	pin, err := rpi.PWMPin(strconv.Itoa(int(p.PinNo)))
-	if err != nil {
-		log.Printf("Get Pin %v failed: %v\n", p.PinNo, err)
-		return
-	}
-	err = pin.SetDutyCycle(p.DutyCycle * 1000) //in nanoseconds
-	if err != nil {
-		log.Println("Set duty cycle failed:", err)
-		return
-	}
-	// log.Printf("Writing dc=%v to pin %v\n", p.DutyCycle, p.PinNo)
-	return nil
 }

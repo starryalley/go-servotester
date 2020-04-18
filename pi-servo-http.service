@@ -1,0 +1,12 @@
+[Unit]
+Description=HTTP Server for RC servo control
+
+[Service]
+EnvironmentFile=-/etc/default/pi-servo-http
+User=root
+ExecStart=/usr/sbin/pi-servo-httpd
+ExecReload=/bin/kill -s HUP $MAINPID
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

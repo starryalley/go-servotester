@@ -6,7 +6,7 @@ PACKAGENAME = main
 
 .PHONY: all
 
-CMD := pi-servotesterd servotester servo_control
+CMD := pi-servotesterd servotester servo_control pi-servo-httpd
 
 all: build
 
@@ -23,16 +23,16 @@ build_client_gui:
 	go build -v -o bin/servotester_gui ./cmd/servotester_gui
 
 install:
-	cp bin/pi-servotesterd /usr/sbin
-	cp pi-servotester.service /lib/systemd/system
-	systemctl enable pi-servotester
-	systemctl start pi-servotester
+	cp bin/pi-servotesterd bin/pi-servo-httpd /usr/sbin
+	cp pi-servotester.service pi-servo-http.service /lib/systemd/system
+	systemctl enable pi-servotester pi-servo-http
+	systemctl start pi-servotester pi-servo-http
 
 uninstall:
-	systemctl stop pi-servotester
-	systemctl disable pi-servotester
-	rm -f /lib/systemd/system/pi-servotester.service
-	rm -f /usr/sbin/pi-servotesterd
+	systemctl stop pi-servotester pi-servo-http
+	systemctl disable pi-servotester pi-servo-http
+	rm -f /lib/systemd/system/pi-servotester.service /lib/systemd/system/pi-servo-http.service
+	rm -f /usr/sbin/pi-servotesterd /usr/sbin/pi-servo-httpd
 
 clean:
 	rm -rf ./bin/*
