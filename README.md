@@ -1,4 +1,4 @@
-go-servotester is a simple RC servo tester program on Raspberry Pi using the Go programming language (http://golang.org/).
+go-servotester is a simple RC servo tester program on Raspberry Pi using the Go programming language.
 
 It uses the following projects:
 - gobot (http://gobot.io/) for managing pin on Raspberry Pi platform
@@ -7,7 +7,7 @@ It uses the following projects:
 
 Use [my fork](https://github.com/starryalley/pi-blaster) where I modify the period to make the PWM frequency at 50Hz, which is for both analog and digital RC servo.
 
-- libui (https://github.com/andlabs/ui) for GUI
+- libui (https://github.com/andlabs/ui) for GUI version of client program.
 
 
 # Getting started
@@ -16,38 +16,52 @@ I run my raspi headlessly so I make this a simple client-server program. The ser
 
 ![my setup](images/setup.png)
 
-# Build and Install
+# Build
 
-Default build is for ARM6
+The project uses go module with Makefile. Simply use make to build:
 
 `make`
 
+Cross compiling for ARMv6:
 
-For ARM7, use:
+`GOARM=6 GOARCH=arm GOOS=linux make`
 
-`make build_arm7 build_client`
+Cross compiling for ARMv7:
 
-Note: Raspberry Pi A, A+, B, B+, Zero use ARM6, and Raspberry Pi 2, 3 use ARM7.
+`GOARM=7 GOARCH=arm GOOS=linux make`
 
-Copy the `pi-servotesterd` binary to Raspberry. `servotester` and `servotester_cli` are client program with user interface.
+Note: Raspberry Pi A, A+, B, B+, Zero use ARM6, and Raspberry Pi 2, 3, 4 use ARM7.
 
+For GUI version of client program, you have to manually build it:
+
+`make build_client_gui`
+
+# Install
+
+`make install` will use systemctl to add the server program on the system (raspberry pi or linux only) and start it.
+
+`make uninstall` to revert it.
+
+The server program's log file will be at `/var/log/pi-servotesterd.log`
+
+You can manually run/install from `bin/` of course.
 
 # Usage
 
-Servo running on raspi, using pi-blaster period 20000000ns, listening on port 6789:
+Servo running on raspi, using pi-blaster period 20000000ns, listening on port 6789 (default daemon options)
 
 `./pi-servotesterd -period 20000000 -port 6789`
 
 For GUI control, run this on your desktop
 
-`./servotester`
+`./servotester_gui`
 
 ![Screenshot](images/gui.png)
 
 
 For cli control, run this on your desktop with correct raspi IP and port
 
-`./servotester_cli -addr 192.168.0.123 -port 6789`
+`./servotester -addr 192.168.0.123 -port 6789`
 
 You will see:
 
@@ -68,3 +82,7 @@ Command format:
 
 `12=center`: center the servo on pin 12
 
+
+# Known issue
+
+Latest ui lib will cause GUI program to crash once hitting 'Connect'. I have to debug this when I have time.
