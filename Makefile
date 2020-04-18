@@ -20,7 +20,7 @@ test:
 	go test ./...
 
 build_client_gui:
-	go build -v -o bin/servotester_gui "-X $(PACKAGENAME).Version=$(VERSION)" ./cmd/servotester_gui
+	go build -v -o bin/servotester_gui ./cmd/servotester_gui
 
 install:
 	cp bin/pi-servotesterd /usr/sbin
