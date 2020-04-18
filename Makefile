@@ -6,7 +6,7 @@ PACKAGENAME = main
 
 .PHONY: all
 
-CMD := pi-servotesterd servotester
+CMD := pi-servotesterd servotester servo_control
 
 all: build
 
