@@ -5,11 +5,18 @@ import (
 	"flag"
 	"fmt"
 	"os"
+    "log"
 	"strconv"
 	"strings"
+
+    . "github.com/starryalley/go-servotester/pkg/common"
 )
 
+//Version of this tool
+var Version = "dev"
+
 func main() {
+    log.Println("servotester version:", Version)
 	var addr = flag.String("addr", "127.0.0.1", "Address. Default: 127.0.0.1")
 	var port = flag.Int("port", 6789, "Port. Default: 6789")
 	flag.Parse()

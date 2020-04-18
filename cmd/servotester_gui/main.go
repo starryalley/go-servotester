@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/andlabs/ui"
+    . "github.com/starryalley/go-servotester/pkg/common"
 )
 
 func main() {
@@ -63,8 +64,8 @@ func main() {
 		// server ip/port and connect buttons
 		statusLabel := ui.NewLabel("Not connected")
 		hbox := ui.NewHorizontalBox()
-		serverIpInput := ui.NewEntry()
-		serverIpInput.SetText("192.168.0.123")
+		serverIPInput := ui.NewEntry()
+		serverIPInput.SetText("192.168.0.123")
 		serverPortInput := ui.NewEntry()
 		serverPortInput.SetText("6789")
 		connectButton := ui.NewButton("Connect")
@@ -72,7 +73,7 @@ func main() {
 			var err error
 			if !connected {
 				go func() {
-					conn, err = ConnectToServer(serverIpInput.Text() + ":" + serverPortInput.Text())
+					conn, err = ConnectToServer(serverIPInput.Text() + ":" + serverPortInput.Text())
 					if err != nil {
 						fmt.Println(err)
 						statusLabel.SetText(err.Error())
@@ -93,7 +94,7 @@ func main() {
 				currentPosition = centrePosition
 			}
 		})
-		hbox.Append(serverIpInput, true)
+		hbox.Append(serverIPInput, true)
 		hbox.Append(serverPortInput, false)
 		hbox.Append(connectButton, false)
 

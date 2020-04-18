@@ -1,0 +1,12 @@
+[Unit]
+Description=Daemon for RC servo control
+
+[Service]
+EnvironmentFile=-/etc/default/pi-servotesterd
+User=root
+ExecStart=/usr/sbin/pi-servotesterd -period 20000000 -port 6789
+ExecReload=/bin/kill -s HUP $MAINPID
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

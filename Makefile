@@ -1,17 +1,39 @@
-.PHONY: build build_arm6 build_arm7 build_client clean
+ifeq ($(origin VERSION), undefined)
+	VERSION := $(shell git rev-parse --short HEAD)
+endif
 
-all: build_arm6 build_client 
+PACKAGENAME = main
 
-build_arm6:
-	GOARM=6 GOARCH=arm GOOS=linux go build -o pi-servotesterd server.go packet.go
+.PHONY: all
 
-build_arm7:
-	GOARM=7 GOARCH=arm GOOS=linux go build -o pi-servotesterd server.go packet.go
+CMD := pi-servotesterd servotester
 
-build_client:
-	go build -o servotester_cli util.go packet.go client.go
-	go build -o servotester util.go packet.go client_gui.go
+all: build
+
+build:
+	@echo "Version:$(VERSION)"
+	for target in $(CMD); do \
+		$(BUILD_ENV_FLAGS) go build -v -o bin/$$target -ldflags "-X $(PACKAGENAME).Version=$(VERSION)" ./cmd/$$target; \
+	done
+
+test:
+	go test ./...
+
+build_client_gui:
+	go build -v -o bin/servotester_gui "-X $(PACKAGENAME).Version=$(VERSION)" ./cmd/servotester_gui
+
+install:
+	cp bin/pi-servotesterd /usr/sbin
+	cp pi-servotester.service /lib/systemd/system
+	systemctl enable pi-servotester
+	systemctl start pi-servotester
+
+uninstall:
+	systemctl stop pi-servotester
+	systemctl disable pi-servotester
+	rm -f /lib/systemd/system/pi-servotester.service
+	rm -f /usr/sbin/pi-servotesterd
 
 clean:
-	rm servotester servotester_cli pi-servotesterd
+	rm -rf ./bin/*
 
